@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
+
 import {
   ButtonsContainer,
   MainContainer,
@@ -11,6 +13,7 @@ import mainHero from "@/assets/main_page_hero.svg";
 
 function Home() {
   const [count, setCount] = useState(0);
+  const navigate = useNavigate();
 
   return (
     <MainContainer>
@@ -29,7 +32,7 @@ function Home() {
           variant="contained"
           color="primary"
           size="large"
-          onClick={() => setCount(count + 1)}
+          onClick={() => navigate("/register")}
         >
           <StyledButtonText>Cadastre-se</StyledButtonText>
         </Button>
