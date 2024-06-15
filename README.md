@@ -1,30 +1,34 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Connect Health Logo](./src/assets/main_page_logo.svg)
 
-Currently, two official plugins are available:
+## Sobre o Projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Connect Health é um aplicativo desenvolvido com React, TypeScript e Vite. A ideia principal do aplicativo é unificar o local onde você salva seus exames de saúde e consultas médicas, tornando mais fácil o acesso e a gestão dessas informações importantes.
 
-## Expanding the ESLint configuration
+## Tecnologias Utilizadas
+- **React**: Biblioteca JavaScript para construção de interfaces de usuário.
+- **TypeScript**: Superset do JavaScript que adiciona tipos estáticos.
+- **Vite**: Ferramenta de build rápida e leve para projetos web modernos.
+- **ESLint**: Ferramenta de linting para manter a qualidade do código.
+- **MUI (Material-UI)**: Biblioteca de componentes React para um design consistente e acessível.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Configuração
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+1. Clone o repositório:
+   ```sh
+   git clone https://github.com/seu-usuario/connect-health.git
+2. Instale as dependências:
+```sh
+cd connect-health
+npm install  
+``` 
+3. Inicie o servidor de desenvolvimento:
+```sh
+npm run dev
 ```
+## Contribuição
+Sinta-se à vontade para contribuir com o projeto. Você pode abrir issues e pull requests para adicionar novas funcionalidades ou corrigir problemas.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+## Figma
+[Link para o Figma](https://www.figma.com/design/KsfZ3D6vHNorKhaW24gjOx/UPX-5?node-id=11-56&t=xZEzaisKJ9uVGNIc-0)
