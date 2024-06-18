@@ -1,31 +1,79 @@
-import { useState } from "react";
-
+import React, { useState } from "react";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
+import { Typography } from "@mui/material";
+import {
+  FillerContainer,
+  MainContainer,
+  MenuOptionsContainer,
+  StyledTitleContainer,
+} from "@/pages/MainMenu/styles";
+import NotificationsHeader from "@/components/NotificationsHeader";
+import BottomNav from "@/components/BottomNav";
+import { menuOptions } from "@/utils/menuOptions";
+import MenuOptions from "@/components/MenuOptions";
 
 function MainMenu() {
-  const [count, setCount] = useState(0);
+  const [menu, setMenu] = useState<{ label: string; value: string } | null>(
+    null,
+  );
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <span>funfou</span>
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <span>funfou</span>
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <MainContainer>
+        <Autocomplete
+          id="size-medium-filled"
+          options={menuOptions}
+          size="small"
+          value={menu}
+          onChange={(
+            event: unknown,
+            newValue: { label: string; value: string } | null,
+          ) => setMenu(newValue as { label: string; value: string })}
+          fullWidth
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon
+                      fontSize="large"
+                      sx={{ paddingBottom: "12px" }}
+                    />
+                  </InputAdornment>
+                ),
+              }}
+              variant="filled"
+              label={
+                <Typography fontWeight="medium" fontSize="1rem">
+                  Pesquisar
+                </Typography>
+              }
+            />
+          )}
+        />
+        <FillerContainer />
+        <StyledTitleContainer>
+          <Typography fontWeight="600" fontSize="1.5rem">
+            Registros
+          </Typography>
+        </StyledTitleContainer>
+        <MenuOptionsContainer>
+          {menuOptions.map((menuOption) => (
+            <MenuOptions
+              key={menuOption.value}
+              menuName={menuOption.label}
+              menuIcon={menuOption.icon}
+            />
+          ))}
+        </MenuOptionsContainer>
+      </MainContainer>
+      <NotificationsHeader />
+
+      <BottomNav />
     </>
   );
 }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import { ptBR } from "@mui/x-date-pickers/locales";
 
 import { DatePicker } from "@mui/x-date-pickers";
 import { Moment } from "moment";
@@ -16,7 +17,7 @@ import headerIcon from "@/assets/register_icon.svg";
 import inlineIcon from "@/assets/inline_heart_icon.svg";
 import CustomInput from "@/components/StyledFormInput";
 import { healthInsuranceOptions } from "@/utils/healthInsuranceOptions";
-
+import moment from "moment";
 function Register() {
   const [count, setCount] = useState(0);
   const [name, setName] = useState("");
@@ -29,6 +30,7 @@ function Register() {
     value: string;
   } | null>(null);
   const [birthDate, setBirthDate] = useState<Moment>();
+  moment.locale("pt-br");
   return (
     <MainContainer>
       <StyledImage src={headerIcon} alt="mainLogo" />
@@ -101,6 +103,9 @@ function Register() {
           key="birthDate"
           value={birthDate}
           label="Data de nascimento"
+          localeText={
+            ptBR.components.MuiLocalizationProvider.defaultProps.localeText
+          }
           format="DD/MM/YYYY"
           sx={{ width: "100%" }}
           slotProps={{ textField: { variant: "filled" } }}

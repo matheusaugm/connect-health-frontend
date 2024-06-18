@@ -1,31 +1,64 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import Avatar from "@mui/material/Avatar";
+import { Typography } from "@mui/material";
+import Button from "@mui/material/Button";
+import {
+  AvatarContainer,
+  MainContainer,
+  UserInfoCcntainer,
+} from "@/pages/Settings/styles";
+import NotificationsHeader from "@/components/NotificationsHeader";
+import BottomNav from "@/components/BottomNav";
+import SettingsOptions from "@/components/SettingsOptions";
 
 function Settings() {
-  const [count, setCount] = useState(0);
+  const [user, setUser] = useState<any>(null);
+  const [usermail, setUsermail] = useState<any>(null);
+
+  useEffect(() => {
+    // fetchData();
+    setUser("Matheus");
+    setUsermail("matheusmeka01@gmail.com");
+  }, []);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <span>funfou</span>
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <span>funfou</span>
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <NotificationsHeader pageName="Perfil" />
+      <MainContainer>
+        <AvatarContainer>
+          <Avatar
+            sx={{ bgcolor: "#C62727" }}
+            alt="Avatar Icon"
+            src="/broken-image.jpg"
+          >
+            {user?.charAt(0)}
+          </Avatar>
+          <UserInfoCcntainer>
+            <Typography fontSize="1rem" fontWeight="600">
+              {user && user}
+            </Typography>
+            <Typography color="grey" fontSize="0.7rem" fontWeight="400">
+              {usermail && usermail}
+            </Typography>
+          </UserInfoCcntainer>
+        </AvatarContainer>
+        <Button
+          fullWidth
+          sx={{ margin: "1rem 1rem", textTransform: "none", maxWidth: "500px"}}
+          variant="contained"
+        >
+          <Typography
+            fontSize="1.3rem"
+            fontWeight="800"
+            sx={{ padding: " 1rem 4rem;" }}
+          >
+            Editar perfil
+          </Typography>
+        </Button>
+
+        <SettingsOptions/>
+      </MainContainer>
+      <BottomNav />
     </>
   );
 }
