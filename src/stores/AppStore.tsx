@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useEffect, useState } from "react";
 import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { ptBR } from "@mui/material/locale";
+import { ptBR } from "@mui/x-date-pickers/locales";
 import { GlobalStyle } from "@/assets/GlobalStyle";
 
 type InitialProps = {
@@ -90,10 +90,29 @@ const customMuiTheme = createTheme(
     typography: {
       fontFamily: connectHealthTheme.fonts.primary,
     },
+    components: {
+      MuiBottomNavigationAction: {
+        styleOverrides: {
+          root: {
+            color: connectHealthTheme.colors.secondary,
+            "&.Mui-selected": {
+              color: "white",
+            },
+            "&.MuiBottomNavigationAction-root": {
+              color: "white",
+            },
+          },
+        },
+        defaultProps: {
+          style: {
+            backgroundColor: connectHealthTheme.colors.secondary,
+          },
+        },
+      },
+    },
   },
   ptBR,
 );
-
 function AppProvider({ children }: AppProviderProps) {
   const [appTitle, setAppTitle] = useState<string>("app.title");
   const [pageTitle, setPageTitle] = useState<string | null>(null);
