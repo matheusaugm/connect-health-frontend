@@ -20,13 +20,15 @@ const NotificationsHeader: FC<NotificationsHeaderProps> = ({ pageName }) => {
   const location = useLocation();
   return (
     <MainContainer>
-      {location.pathname !== "/home" && location.pathname !== "/register" ? (
+      {location.pathname !== "/home" &&
+      location.pathname !== "/register" &&
+      location.pathname !== "/register_exam" ? (
         <>
           <StyledIconContainer>
             <ChevronLeftIcon onClick={() => navigate(-1)} />
           </StyledIconContainer>
           <Typography
-            sx={{ justifySelf: "center" }}
+            sx={{ justifySelf: "center", whiteSpace: "nowrap" }}
             color="primary"
             fontWeight="600"
             fontSize="1.5rem"

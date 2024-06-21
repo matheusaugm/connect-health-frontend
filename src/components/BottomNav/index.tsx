@@ -20,7 +20,7 @@ const BottomNav: FC = () => {
           icon={<HomeIcon />}
         />
         <BottomNavigationAction
-          onClick={() => navigate("/registerItem")}
+          onClick={() => navigate("/register_exam")}
           label="Registrar"
           icon={<AddIcon />}
         />

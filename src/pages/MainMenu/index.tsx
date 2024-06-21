@@ -19,6 +19,11 @@ function MainMenu() {
   const [menu, setMenu] = useState<{ label: string; value: string } | null>(
     null,
   );
+  const [searchValue, setSearchValue] = useState("");
+
+  const filteredMenuOptions = menuOptions.filter((menuOption) =>
+    menuOption.label.toLowerCase().includes(searchValue.toLowerCase()),
+  );
 
   return (
     <>
@@ -32,11 +37,15 @@ function MainMenu() {
             event: unknown,
             newValue: { label: string; value: string } | null,
           ) => setMenu(newValue as { label: string; value: string })}
+          onInputChange={(event, newInputValue) => {
+            setSearchValue(newInputValue);
+          }}
           fullWidth
           renderInput={(params) => (
             <TextField
               {...params}
               InputProps={{
+                ...params.InputProps,
                 endAdornment: (
                   <InputAdornment position="end">
                     <SearchIcon
@@ -62,7 +71,7 @@ function MainMenu() {
           </Typography>
         </StyledTitleContainer>
         <MenuOptionsContainer>
-          {menuOptions.map((menuOption) => (
+          {filteredMenuOptions.map((menuOption) => (
             <MenuOptions
               key={menuOption.value}
               menuName={menuOption.label}
@@ -72,7 +81,6 @@ function MainMenu() {
         </MenuOptionsContainer>
       </MainContainer>
       <NotificationsHeader />
-
       <BottomNav />
     </>
   );

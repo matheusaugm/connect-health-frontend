@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import { ptBR } from "@mui/x-date-pickers/locales";
 
 import { DatePicker } from "@mui/x-date-pickers";
-import { Moment } from "moment";
+import dayjs, { Dayjs } from "dayjs";
 import {
   FormContainer,
   MainContainer,
@@ -17,9 +17,8 @@ import headerIcon from "@/assets/register_icon.svg";
 import inlineIcon from "@/assets/inline_heart_icon.svg";
 import CustomInput from "@/components/StyledFormInput";
 import { healthInsuranceOptions } from "@/utils/healthInsuranceOptions";
-import moment from "moment";
+
 function Register() {
-  const [count, setCount] = useState(0);
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
@@ -29,8 +28,8 @@ function Register() {
     label: string;
     value: string;
   } | null>(null);
-  const [birthDate, setBirthDate] = useState<Moment>();
-  moment.locale("pt-br");
+  const [birthDate, setBirthDate] = useState<Dayjs>();
+  dayjs.locale("pt-br");
   return (
     <MainContainer>
       <StyledImage src={headerIcon} alt="mainLogo" />
@@ -110,13 +109,13 @@ function Register() {
           sx={{ width: "100%" }}
           slotProps={{ textField: { variant: "filled" } }}
           disableFuture
-          onChange={(date) => setBirthDate(date as Moment)}
+          onChange={(date) => setBirthDate(date as Dayjs)}
         />
         <Button
           variant="contained"
           color="primary"
           size="large"
-          onClick={() => setCount(count + 1)}
+          onClick={() => console.log("Cadastrar")}
         >
           {
             // TODO: Implementar o termo de compromissos e validar os métodos da API pra criar novo usuário
