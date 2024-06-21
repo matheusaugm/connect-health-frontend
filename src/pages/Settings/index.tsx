@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
 import {
   AvatarContainer,
   MainContainer,
@@ -14,7 +15,7 @@ import SettingsOptions from "@/components/SettingsOptions";
 function Settings() {
   const [user, setUser] = useState<any>(null);
   const [usermail, setUsermail] = useState<any>(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     // fetchData();
     setUser("Matheus");
@@ -44,8 +45,9 @@ function Settings() {
         </AvatarContainer>
         <Button
           fullWidth
-          sx={{ margin: "1rem 1rem", textTransform: "none", maxWidth: "500px"}}
+          sx={{ margin: "1rem 1rem", textTransform: "none", maxWidth: "500px" }}
           variant="contained"
+          onClick={() => navigate("/edit_profile")}
         >
           <Typography
             fontSize="1.3rem"
@@ -56,7 +58,7 @@ function Settings() {
           </Typography>
         </Button>
 
-        <SettingsOptions/>
+        <SettingsOptions />
       </MainContainer>
       <BottomNav />
     </>

@@ -24,7 +24,7 @@ function Home() {
           variant="outlined"
           color="primary"
           size="large"
-          onClick={() => setCount(count + 1)}
+          onClick={() => navigate("/login")}
         >
           <StyledButtonText>Entrar</StyledButtonText>
         </Button>{" "}
