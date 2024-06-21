@@ -2,7 +2,9 @@ import React, { ReactNode, useContext, useEffect, useState } from "react";
 import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { ptBR } from "@mui/x-date-pickers/locales";
+import { Bounce, ToastContainer } from "react-toastify";
 import { GlobalStyle } from "@/assets/GlobalStyle";
+import "react-toastify/dist/ReactToastify.css";
 
 type InitialProps = {
   name: string;
@@ -125,8 +127,22 @@ function AppProvider({ children }: AppProviderProps) {
 
   return (
     <ThemeProvider theme={customMuiTheme}>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
       <StyledThemeProvider theme={connectHealthTheme}>
         <GlobalStyle />
+
         <AppContext.Provider
           value={{
             name: initialState.name,
