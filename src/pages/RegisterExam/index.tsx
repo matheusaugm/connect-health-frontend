@@ -29,12 +29,13 @@ import {
   recurrenceOptions,
 } from "@/utils/registerExamOptions";
 
+type SpecificOptionKeys = keyof typeof specificOptions;
+
 function RegisterExam() {
-  const [action, setAction] = useState<{
-    label: string;
-    value: string;
-  } | null>(null);
-  const [subAction, setSubAction] = useState<string | null>(null);
+  const [action, setAction] = useState<{ label: string; value: string } | null>(
+    null,
+  );
+  const [subAction, setSubAction] = useState<SpecificOptionKeys | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [actionDate, setActionDate] = useState<Dayjs | null>(null);
   const [otherText, setOtherText] = useState<string>("");
@@ -111,7 +112,7 @@ function RegisterExam() {
               size="medium"
               value={examTypes.find((type) => type.value === subAction)}
               onChange={(event, newValue) =>
-                setSubAction(newValue?.value || null)
+                setSubAction((newValue?.value as SpecificOptionKeys) || null)
               }
               fullWidth
               renderInput={(params) => (
@@ -128,7 +129,7 @@ function RegisterExam() {
               size="medium"
               value={consultationTypes.find((type) => type.value === subAction)}
               onChange={(event, newValue) =>
-                setSubAction(newValue?.value || null)
+                setSubAction((newValue?.value as SpecificOptionKeys) || null)
               }
               fullWidth
               renderInput={(params) => (
@@ -191,7 +192,13 @@ function RegisterExam() {
                 Upload arquivo
               </Typography>
             </AttachOption>
-            <hr style={{ borderLeft: "2px dashed #253b6e" }} />
+            <hr
+              style={{
+                borderLeft: "2px dashed #253b6e",
+                height: "48px",
+                margin: "0 16px",
+              }}
+            />
             <AttachOption>
               <AttachIcon src={PhotoIcon} alt="Foto" />
               <Typography color="#253B6E" fontWeight="500">
@@ -206,7 +213,7 @@ function RegisterExam() {
               </Typography>
               <ul>
                 {files.map((file) => (
-                  <li key={file.path}>{file.path}</li>
+                  <li key={file.name}>{file.name}</li>
                 ))}
               </ul>
             </div>
@@ -223,7 +230,7 @@ function RegisterExam() {
             fontWeight="800"
             sx={{ padding: " 1rem 4rem;" }}
           >
-            Salvar{" "}
+            Salvar
           </Typography>
         </Button>
       </MainContainer>
