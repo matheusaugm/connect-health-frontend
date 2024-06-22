@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect } from "react";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 
@@ -12,13 +12,12 @@ import mainLogo from "@/assets/main_page_logo.svg";
 import mainHero from "@/assets/main_page_hero.svg";
 
 function Home() {
-  const [count, setCount] = useState(0);
   const navigate = useNavigate();
 
   return (
     <MainContainer>
-      <StyledImage src={mainLogo} alt="mainLogo" />
-      <StyledImage src={mainHero} alt="mainLogo" />
+      {mainLogo && <StyledImage src={mainLogo} alt="mainLogo" />}
+      {mainHero && <StyledImage src={mainHero} alt="mainHero" />}
       <ButtonsContainer>
         <Button
           variant="outlined"
@@ -27,7 +26,7 @@ function Home() {
           onClick={() => navigate("/login")}
         >
           <StyledButtonText>Entrar</StyledButtonText>
-        </Button>{" "}
+        </Button>
         <Button
           variant="contained"
           color="primary"

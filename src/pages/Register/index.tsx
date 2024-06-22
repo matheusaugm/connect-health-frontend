@@ -3,9 +3,10 @@ import Button from "@mui/material/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { ptBR } from "@mui/x-date-pickers/locales";
-
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import {
   FormContainer,
   MainContainer,
@@ -18,18 +19,70 @@ import inlineIcon from "@/assets/inline_heart_icon.svg";
 import CustomInput from "@/components/StyledFormInput";
 import { healthInsuranceOptions } from "@/utils/healthInsuranceOptions";
 
+import { useUser } from "@/stores/UserStore";
+
 function Register() {
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
+
+  const { user, setUser, setIsAuthenticated } = useUser();
+
+  const [name, setName] = useState(user?.username || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [password, setPassword] = useState(user?.password || "");
+  const [confirmPassword, setConfirmPassword] = useState(user?.password || "");
   const [healthInsurance, setHealthInsurance] = useState<{
     label: string;
     value: string;
   } | null>(null);
-  const [birthDate, setBirthDate] = useState<Dayjs>();
-  dayjs.locale("pt-br");
+  const [birthDate, setBirthDate] = useState<Dayjs | null>(
+    dayjs(user?.birthDate),
+  );
+  const [surname, setSurname] = useState(""); // Assuming surname is not part of the UserProps
+
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    const newUser = {
+      username: name,
+      password,
+      email,
+      healthInsurance: healthInsurance?.value || "",
+      birthDate: birthDate?.format("YYYY-MM-DD") || "",
+      bloodType: "", // Add appropriate default or fetched values
+      comorbities: "", // Add appropriate default or fetched values
+      userSex: "", // Add appropriate default or fetched values
+    };
+
+    const resolveAfter3Sec = new Promise<void>((resolve, reject) =>
+      setTimeout(() => {
+        // Simulate a registration success
+        setUser(newUser);
+        setIsAuthenticated(true);
+        localStorage.setItem("user", JSON.stringify(newUser));
+        localStorage.setItem("isAuthenticated", "true");
+        resolve();
+      }, 3000),
+    );
+
+    try {
+      toast.promise(resolveAfter3Sec, {
+        pending: "Cadastrando...",
+        success: "Cadastro realizado com sucesso!",
+        error: "Falha no cadastro 🤯",
+      });
+
+      await resolveAfter3Sec;
+      // Redirect or perform other actions upon successful registration
+      navigate("/");
+    } catch (error) {
+      // Handle registration failure
+      toast.error("Falha no cadastro");
+    }
+  };
+
   return (
     <MainContainer>
       <StyledImage src={headerIcon} alt="mainLogo" />
@@ -74,7 +127,6 @@ function Register() {
             setPassword(e.target.value)
           }
         />
-
         <CustomInput
           id="filled-adornment-confirm-password"
           label="Confirmar senha"
@@ -115,11 +167,8 @@ function Register() {
           variant="contained"
           color="primary"
           size="large"
-          onClick={() => console.log("Cadastrar")}
+          onClick={handleRegister}
         >
-          {
-            // TODO: Implementar o termo de compromissos e validar os métodos da API pra criar novo usuário
-          }
           <StyledButtonText>Cadastrar</StyledButtonText>
         </Button>
       </FormContainer>

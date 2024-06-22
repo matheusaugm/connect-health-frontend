@@ -74,6 +74,7 @@ function MainMenu() {
           {filteredMenuOptions.map((menuOption) => (
             <MenuOptions
               key={menuOption.value}
+              route={menuOption.route || "/"}
               menuName={menuOption.label}
               menuIcon={menuOption.icon}
             />

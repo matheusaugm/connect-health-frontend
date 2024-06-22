@@ -15,9 +15,8 @@ import {
 } from "@/pages/Exams/style";
 import NotificationsHeader from "@/components/NotificationsHeader";
 import ContentCard from "@/components/ContentCard";
-import { consultationTypes } from "@/utils/registerExamOptions";
 
-interface Consultation {
+interface Exam {
   userIdentifier: string;
   contentType: string;
   contentDate: string;
@@ -28,39 +27,37 @@ interface Consultation {
   contentFile: string;
 }
 
-const MedicalAppointments = () => {
-  const [speciality, setSpeciality] = useState<string>("");
-  const [consultationDate, setConsultationDate] = useState<Dayjs | null>(null);
-  const [consultations, setConsultations] = useState<Consultation[]>([]);
+const Exams = () => {
+  const [examType, setExamType] = useState<string>("");
+  const [examDate, setExamDate] = useState<Dayjs | null>(null);
+  const [exams, setExams] = useState<Exam[]>([]);
 
   useEffect(() => {
-    const storedContents = localStorage.getItem("contents");
-    if (storedContents) {
-      setConsultations(
-        JSON.parse(storedContents).filter(
-          (content: Consultation) => content.contentType === "consulta",
+    const storedExams = localStorage.getItem("contents");
+    if (storedExams) {
+      setExams(
+        JSON.parse(storedExams).filter(
+          (content: Exam) => content.contentType === "exame",
         ),
       );
     }
   }, []);
 
-  const handleSpecialityChange = (event: SelectChangeEvent) => {
-    setSpeciality(event.target.value);
+  const handleChange = (event: SelectChangeEvent) => {
+    setExamType(event.target.value);
   };
 
-  const filteredConsultations = consultations.filter((consultation) => {
-    const matchesSpeciality = speciality
-      ? consultation.contentSubtype === speciality
+  const filteredExams = exams.filter((exam) => {
+    const matchesType = examType ? exam.contentSubtype === examType : true;
+    const matchesDate = examDate
+      ? exam.contentDate === examDate.format("YYYY-MM-DD")
       : true;
-    const matchesDate = consultationDate
-      ? consultation.contentDate === consultationDate.format("YYYY-MM-DD")
-      : true;
-    return matchesSpeciality && matchesDate;
+    return matchesType && matchesDate;
   });
 
   return (
     <>
-      <NotificationsHeader pageName="Consultas" />
+      <NotificationsHeader pageName="Exames" />
       <MainContainer>
         <FilterContainer>
           <Typography fontSize="1rem" fontWeight="600">
@@ -71,26 +68,22 @@ const MedicalAppointments = () => {
             sx={{ m: 1, minWidth: 120 }}
             size="small"
           >
-            <InputLabel id="demo-simple-select-filled-label">
-              Especialidade
-            </InputLabel>
+            <InputLabel id="demo-simple-select-filled-label">Tipo</InputLabel>
             <Select
               labelId="demo-simple-select-filled-label"
               id="demo-simple-select-filled"
-              value={speciality}
-              onChange={handleSpecialityChange}
+              value={examType}
+              onChange={handleChange}
             >
-              <MenuItem value="">Todas</MenuItem>
-              {consultationTypes.map((type) => (
-                <MenuItem key={type.value} value={type.value}>
-                  {type.label}
-                </MenuItem>
-              ))}
+              <MenuItem value="">Todos</MenuItem>
+              <MenuItem value="sanguineos">Sanguíneos</MenuItem>
+              <MenuItem value="imagens">Imagens</MenuItem>
+              <MenuItem value="diversos">Diversos</MenuItem>
             </Select>
           </FormControl>
           <DatePicker
-            key="consultationDate"
-            value={consultationDate}
+            key="examDate"
+            value={examDate}
             sx={{ minWidth: "120px" }}
             label="Data"
             localeText={
@@ -99,18 +92,18 @@ const MedicalAppointments = () => {
             format="DD/MM/YYYY"
             slotProps={{ textField: { variant: "filled", size: "small" } }}
             disableFuture
-            onChange={(date) => setConsultationDate(date as Dayjs)}
+            onChange={(date) => setExamDate(date as Dayjs)}
           />
         </FilterContainer>
         <ContentContainer>
-          {filteredConsultations.map((consultation, index) => (
+          {filteredExams.map((exam, index) => (
             <ContentCard
               key={index}
-              examType={consultation.contentSubtype}
-              examDetails={consultation.contentOption}
-              examDate={consultation.contentDate}
-              examName={consultation.contentOption}
-              examFile={consultation.contentFile}
+              examType={exam.contentSubtype}
+              examDetails={exam.contentOption}
+              examDate={exam.contentDate}
+              examName={exam.contentOption}
+              examFile={exam.contentFile}
             />
           ))}
         </ContentContainer>
@@ -120,4 +113,4 @@ const MedicalAppointments = () => {
   );
 };
 
-export default MedicalAppointments;
+export default Exams;

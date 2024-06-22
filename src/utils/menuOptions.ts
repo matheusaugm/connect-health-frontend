@@ -13,11 +13,12 @@ export const menuOptions = [
     value: "MedicalHistory",
     icon: MedicalHistoryIcon,
   },
-  { label: "Exames", value: "Exams", icon: ExamsIcon },
+  { label: "Exames", value: "Exams", icon: ExamsIcon, route: "exams"},
   {
     label: "Consultas",
     value: "MedicalAppointments",
     icon: MedicalAppointmentsIcon,
+    route: "appointments",
   },
   { label: "Vacinas", value: "Vaccines", icon: Vaccines },
   { label: "Informações médicas", value: "MedicalInfo", icon: MedicalInfo },

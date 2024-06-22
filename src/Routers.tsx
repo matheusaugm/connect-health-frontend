@@ -13,8 +13,12 @@ import EditProfile from "@/pages/EditProfile";
 import ReportAnIssue from "@/pages/ReportAnIssue";
 import ChangePassword from "@/pages/ChangePassword";
 import RegisterExam from "@/pages/RegisterExam";
+import Exams from "@/pages/Exams";
+import PrivateRoute from "@/components/PrivateRoute";
+import MedicalAppointment from "@/pages/MedicalAppointment";
+import MedicalAppointments from "@/pages/MedicalAppointment";
 
-// Set the locale globally for moment
+// Set the locale globally for dayjs
 dayjs.locale("pt-br");
 
 const Routers = () => {
@@ -25,12 +29,63 @@ const Routers = () => {
           <Route path="/" key="home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<MainMenu />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/edit_profile" element={<EditProfile />} />
-          <Route path="/report_an_issue" element={<ReportAnIssue />} />
-          <Route path="/change_password" element={<ChangePassword />} />
-          <Route path="/register_exam" element={<RegisterExam />} />
+          <Route
+            path="/home"
+            element={
+              <PrivateRoute>
+                <MainMenu />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <PrivateRoute>
+                <Settings />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/edit_profile"
+            element={
+              <PrivateRoute>
+                <EditProfile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/report_an_issue"
+            element={
+              <PrivateRoute>
+                <ReportAnIssue />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/change_password"
+            element={
+              <PrivateRoute>
+                <ChangePassword />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/register_exam"
+            element={
+              <PrivateRoute>
+                <RegisterExam />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/exams"
+            element={
+              <PrivateRoute>
+                <Exams />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/appointments" element={<MedicalAppointments />} />
         </Routes>
       </BrowserRouter>
     </LocalizationProvider>

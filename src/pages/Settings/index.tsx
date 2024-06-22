@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -6,21 +6,28 @@ import { useNavigate } from "react-router-dom";
 import {
   AvatarContainer,
   MainContainer,
-  UserInfoCcntainer,
+  UserInfoContainer,
 } from "@/pages/Settings/styles";
 import NotificationsHeader from "@/components/NotificationsHeader";
 import BottomNav from "@/components/BottomNav";
 import SettingsOptions from "@/components/SettingsOptions";
+import { useUser } from "@/stores/UserStore";
 
 function Settings() {
-  const [user, setUser] = useState<any>(null);
-  const [usermail, setUsermail] = useState<any>(null);
+  const { user, setIsAuthenticated } = useUser();
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.setItem("isAuthenticated", "false");
+    navigate("/login");
+  };
+
   useEffect(() => {
-    // fetchData();
-    setUser("Matheus");
-    setUsermail("matheusmeka01@gmail.com");
-  }, []);
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   return (
     <>
@@ -32,16 +39,16 @@ function Settings() {
             alt="Avatar Icon"
             src="/broken-image.jpg"
           >
-            {user?.charAt(0)}
+            {user?.username?.charAt(0)}
           </Avatar>
-          <UserInfoCcntainer>
+          <UserInfoContainer>
             <Typography fontSize="1rem" fontWeight="600">
-              {user && user}
+              {user?.username}
             </Typography>
             <Typography color="grey" fontSize="0.7rem" fontWeight="400">
-              {usermail && usermail}
+              {user?.email}
             </Typography>
-          </UserInfoCcntainer>
+          </UserInfoContainer>
         </AvatarContainer>
         <Button
           fullWidth
@@ -52,13 +59,12 @@ function Settings() {
           <Typography
             fontSize="1.3rem"
             fontWeight="800"
-            sx={{ padding: " 1rem 4rem;" }}
+            sx={{ padding: "1rem 4rem" }}
           >
             Editar perfil
           </Typography>
         </Button>
-
-        <SettingsOptions />
+        <SettingsOptions onLogout={handleLogout} />
       </MainContainer>
       <BottomNav />
     </>

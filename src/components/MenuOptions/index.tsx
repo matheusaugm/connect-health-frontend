@@ -6,14 +6,15 @@ import { StyledMainContainer, StyledIcon } from "./styles";
 interface MenuOptionsProps {
   menuName: string;
   menuIcon: string;
+  route: string;
 }
-const MenuOptions: FC<MenuOptionsProps> = ({ menuName, menuIcon }) => {
+const MenuOptions: FC<MenuOptionsProps> = ({ menuName, menuIcon, route }) => {
   const navigate = useNavigate();
   const isDisabled = menuName !== "Consultas" && menuName !== "Exames";
 
   return (
     <StyledMainContainer
-      onClick={() => !isDisabled && navigate(`/${menuName}`)}
+      onClick={() => !isDisabled && navigate(`/${route}`)}
       isDisabled={isDisabled}
     >
       <StyledIcon src={menuIcon} alt={`${menuIcon}`} isDisabled={isDisabled} />

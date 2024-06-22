@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+// @ts-nocheck
+import React, { useCallback, useEffect } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -9,6 +10,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import { useDropzone } from "react-dropzone";
 import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
+import { toast } from "react-toastify";
 import NotificationsHeader from "@/components/NotificationsHeader";
 import {
   MainContainer,
@@ -28,41 +30,81 @@ import {
   specificOptions,
   recurrenceOptions,
 } from "@/utils/registerExamOptions";
+import { useContent } from "@/stores/ContentStore";
+import { useUser } from "@/stores/UserStore";
 
 type SpecificOptionKeys = keyof typeof specificOptions;
 
 function RegisterExam() {
-  const [action, setAction] = useState<{ label: string; value: string } | null>(
-    null,
-  );
-  const [subAction, setSubAction] = useState<SpecificOptionKeys | null>(null);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [actionDate, setActionDate] = useState<Dayjs | null>(null);
-  const [otherText, setOtherText] = useState<string>("");
-  const [recurrence, setRecurrence] = useState<string | null>(null);
-  const [files, setFiles] = useState<File[]>([]);
+  const {
+    contents,
+    setContents,
+    contentType,
+    setContentType,
+    contentDate,
+    setContentDate,
+    contentSubtype,
+    setContentSubtype,
+    contentOptions,
+    setContentOptions,
+    contentOtherText,
+    setContentOtherText,
+    contentRecurrence,
+    setContentRecurrence,
+    contentFile,
+    setContentFile,
+  } = useContent();
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-  }, []);
+  const { user } = useUser();
+
+  useEffect(() => {
+    setContentType("");
+    setContentDate(null as unknown as Dayjs);
+    setContentSubtype("");
+    setContentOptions([]);
+    setContentOtherText("");
+    setContentRecurrence("");
+    setContentFile("");
+  }, [
+    setContentType,
+    setContentDate,
+    setContentSubtype,
+    setContentOptions,
+    setContentOtherText,
+    setContentRecurrence,
+    setContentFile,
+  ]);
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setContentFile(reader.result as string);
+      };
+      setContentFile(file.name); // Set file name to display
+    },
+    [setContentFile],
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    multiple: true,
+    multiple: false,
   });
 
   const handleActionChange = (
     event: unknown,
     newValue: { label: string; value: string } | null,
   ) => {
-    setAction(newValue);
-    setSubAction(null);
-    setSelectedOptions([]);
-    setOtherText("");
+    setContentType(newValue?.value || "");
+    setContentSubtype("");
+    setContentOptions([]);
+    setContentOtherText("");
   };
 
   const handleCheckboxChange = (option: string) => {
-    setSelectedOptions((prevSelected) =>
+    setContentOptions((prevSelected: string[]) =>
       prevSelected.includes(option)
         ? prevSelected.filter((item) => item !== option)
         : [...prevSelected, option],
@@ -70,21 +112,74 @@ function RegisterExam() {
   };
 
   const renderSpecificOptions = () => {
-    if (subAction && specificOptions[subAction]) {
-      return specificOptions[subAction].map((option) => (
-        <FormControlLabel
-          key={option}
-          control={
-            <Checkbox
-              checked={selectedOptions.includes(option)}
-              onChange={() => handleCheckboxChange(option)}
-            />
-          }
-          label={option}
-        />
-      ));
+    // eslint-disable-next-line
+    if (contentSubtype && specificOptions.hasOwnProperty(contentSubtype)) {
+      return specificOptions[contentSubtype as SpecificOptionKeys].map(
+        (option) => (
+          <FormControlLabel
+            key={option}
+            control={
+              <Checkbox
+                checked={contentOptions.includes(option)}
+                onChange={() => handleCheckboxChange(option)}
+              />
+            }
+            label={option}
+          />
+        ),
+      );
     }
     return null;
+  };
+
+  const handleSave = async () => {
+    const newContents = contentOptions.map((option) => ({
+      userIdentifier: user.email,
+      contentType,
+      contentDate: contentDate ? contentDate.format("YYYY-MM-DD") : "",
+      contentSubtype,
+      contentOption: option,
+      contentOtherText: option === "Outros" ? contentOtherText : "",
+      contentRecurrence,
+      contentFile,
+    }));
+
+    // Ensure that we save a single record for consultations as they do not have multiple options
+    if (contentType === "consulta" && newContents.length === 0) {
+      newContents.push({
+        userIdentifier: user.email,
+        contentType,
+        contentDate: contentDate ? contentDate.format("YYYY-MM-DD") : "",
+        contentSubtype,
+        contentOption: contentSubtype,
+        contentOtherText,
+        contentRecurrence,
+        contentFile,
+      });
+    }
+
+    try {
+      // eslint-disable-next-line
+      const resolveAfter3Sec = new Promise<void>((resolve, reject) => {
+        setTimeout(() => {
+          const updatedContents = [...contents, ...newContents];
+          setContents(updatedContents);
+          localStorage.setItem("contents", JSON.stringify(updatedContents));
+          resolve();
+        }, 3000);
+      });
+
+      toast.promise(resolveAfter3Sec, {
+        pending: "Salvando...",
+        success: "Conteúdos salvos com sucesso 👌",
+        error: "Erro ao salvar conteúdos 🤯",
+      });
+
+      await resolveAfter3Sec;
+      console.log("Conteúdos salvos com sucesso", newContents);
+    } catch (error) {
+      toast.error("Erro ao salvar conteúdos");
+    }
   };
 
   return (
@@ -96,7 +191,7 @@ function RegisterExam() {
             id="size-medium-filled"
             options={actionType}
             size="medium"
-            value={action}
+            value={actionType.find((type) => type.value === contentType)}
             onChange={handleActionChange}
             fullWidth
             renderInput={(params) => (
@@ -104,15 +199,15 @@ function RegisterExam() {
             )}
           />
         </LabeledContainerInput>
-        {action?.value === "exame" && (
+        {contentType === "exame" && (
           <LabeledContainerInput label="Tipo de Exame">
             <Autocomplete
               id="subaction-autocomplete"
               options={examTypes}
               size="medium"
-              value={examTypes.find((type) => type.value === subAction)}
+              value={examTypes.find((type) => type.value === contentSubtype)}
               onChange={(event, newValue) =>
-                setSubAction((newValue?.value as SpecificOptionKeys) || null)
+                setContentSubtype((newValue?.value as SpecificOptionKeys) || "")
               }
               fullWidth
               renderInput={(params) => (
@@ -121,15 +216,17 @@ function RegisterExam() {
             />
           </LabeledContainerInput>
         )}
-        {action?.value === "consulta" && (
+        {contentType === "consulta" && (
           <LabeledContainerInput label="Especialidade">
             <Autocomplete
               id="subaction-autocomplete"
               options={consultationTypes}
               size="medium"
-              value={consultationTypes.find((type) => type.value === subAction)}
+              value={consultationTypes.find(
+                (type) => type.value === contentSubtype,
+              )}
               onChange={(event, newValue) =>
-                setSubAction((newValue?.value as SpecificOptionKeys) || null)
+                setContentSubtype((newValue?.value as SpecificOptionKeys) || "")
               }
               fullWidth
               renderInput={(params) => (
@@ -138,25 +235,25 @@ function RegisterExam() {
             />
           </LabeledContainerInput>
         )}
-        {subAction && (
+        {contentSubtype && (
           <SpecificOptionsContainer>
             {renderSpecificOptions()}
           </SpecificOptionsContainer>
         )}
-        {selectedOptions.includes("Outros") && (
+        {contentOptions.includes("Outros") && (
           <TextField
             variant="filled"
             label="Especificar"
             fullWidth
-            value={otherText}
-            onChange={(e) => setOtherText(e.target.value)}
+            value={contentOtherText}
+            onChange={(e) => setContentOtherText(e.target.value)}
             inputProps={{ maxLength: 50 }}
           />
         )}
         <LabeledContainerInput label="Data">
           <DatePicker
             key="birthDate"
-            value={actionDate}
+            value={contentDate}
             label="DD/MM/AAAA"
             localeText={
               ptBR.components.MuiLocalizationProvider.defaultProps.localeText
@@ -165,7 +262,7 @@ function RegisterExam() {
             sx={{ width: "100%" }}
             slotProps={{ textField: { variant: "filled" } }}
             disableFuture
-            onChange={(date) => setActionDate(date as Dayjs)}
+            onChange={(date) => setContentDate(date as Dayjs)}
           />
         </LabeledContainerInput>
         <LabeledContainerInput label="Recorrência">
@@ -173,9 +270,11 @@ function RegisterExam() {
             id="recurrence-autocomplete"
             options={recurrenceOptions}
             size="medium"
-            value={recurrenceOptions.find((type) => type.value === recurrence)}
+            value={recurrenceOptions.find(
+              (type) => type.value === contentRecurrence,
+            )}
             onChange={(event, newValue) =>
-              setRecurrence(newValue?.value || null)
+              setContentRecurrence(newValue?.value || "")
             }
             fullWidth
             renderInput={(params) => (
@@ -206,15 +305,13 @@ function RegisterExam() {
               </Typography>
             </AttachOption>
           </AttachSection>
-          {files.length > 0 && (
+          {contentFile && (
             <div>
               <Typography variant="subtitle1" fontWeight="600">
                 Arquivos:
               </Typography>
               <ul>
-                {files.map((file) => (
-                  <li key={file.name}>{file.name}</li>
-                ))}
+                <li>{contentFile}</li>
               </ul>
             </div>
           )}
@@ -223,7 +320,7 @@ function RegisterExam() {
           fullWidth
           sx={{ margin: "1rem 1rem", textTransform: "none", maxWidth: "500px" }}
           variant="contained"
-          onClick={() => console.log("Salvar")}
+          onClick={handleSave}
         >
           <Typography
             fontSize="1.3rem"

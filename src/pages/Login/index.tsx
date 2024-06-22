@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
-
 import moment from "moment";
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -15,25 +14,29 @@ import {
 } from "@/pages/Login/styles";
 import headerIcon from "@/assets/main_page_logo.svg";
 import CustomInput from "@/components/StyledFormInput";
+import { useUser } from "@/stores/UserStore";
 
 function Login() {
+  const { setUser, setIsAuthenticated } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleLoginAttempt = async () => {
     if (email && password) {
-      const resolveAfter3Sec = new Promise<void>((resolve, reject) =>
+      const resolveAfter3Sec = new Promise<void>((resolve, reject) => {
         setTimeout(() => {
           // Simulate a login success
-          const loginSuccessful = true; // trocar pela lógica de login
-          if (loginSuccessful) {
+          const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+          if (storedUser.email === email && storedUser.password === password) {
+            setUser(storedUser);
+            setIsAuthenticated(true);
             resolve();
           } else {
             reject();
           }
-        }, 3000),
-      );
+        }, 3000);
+      });
 
       try {
         toast.promise(resolveAfter3Sec, {
@@ -91,11 +94,17 @@ function Login() {
           size="large"
           onClick={() => handleLoginAttempt()}
         >
-          {
-            // TODO: Implementar o login
-          }
           <StyledButtonText>Entrar</StyledButtonText>
         </Button>
+        <Typography
+          fontWeight="600"
+          onClick={() => navigate("/register")}
+          align="center"
+          color="primary"
+        >
+          {" "}
+          Criar uma conta
+        </Typography>
       </FormContainer>
     </MainContainer>
   );

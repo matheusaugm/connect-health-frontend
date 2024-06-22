@@ -9,7 +9,11 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useNavigate } from "react-router-dom";
 import { MainContainer } from "@/components/SettingsOptions/styles";
 
-const SettingsOptions = () => {
+interface SettingsOptionsProps {
+  onLogout: () => void;
+}
+
+const SettingsOptions = ({ onLogout }: SettingsOptionsProps) => {
   const navigate = useNavigate();
   const settingsOptions = [
     {
@@ -28,6 +32,7 @@ const SettingsOptions = () => {
     {
       optionLabel: "Log out",
       optionIcon: <ExitToAppOutlinedIcon sx={{ color: "white" }} />,
+      action: onLogout,
     },
     {
       optionLabel: "Alterar senha",
@@ -36,11 +41,19 @@ const SettingsOptions = () => {
     },
   ];
 
+  const handleClick = (option: any) => {
+    if (option.action) {
+      option.action();
+    } else if (option.pathName) {
+      navigate(option.pathName);
+    }
+  };
+
   return (
     <>
       {settingsOptions.map((option) => (
         <MainContainer
-          onClick={() => navigate(`${option.pathName}`)}
+          onClick={() => handleClick(option)}
           key={`mainContainer${option.optionLabel}`}
         >
           <Button
@@ -60,4 +73,5 @@ const SettingsOptions = () => {
     </>
   );
 };
+
 export default SettingsOptions;
