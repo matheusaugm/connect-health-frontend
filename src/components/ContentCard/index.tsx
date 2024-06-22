@@ -1,5 +1,9 @@
 import { FC, useEffect, useState } from "react";
 import { Typography } from "@mui/material";
+import dayjs from "dayjs";
+import "dayjs/locale/pt-br";
+import localeData from "dayjs/plugin/localeData";
+
 import {
   ExamDateContainer,
   ExamDescriptionContainer,
@@ -11,6 +15,9 @@ import bloodExam from "@/assets/blood_exam_icon.svg";
 import imageExam from "@/assets/image_exam_icon.svg";
 import otherExam from "@/assets/medical_sharp_icon.svg";
 import appointmentIcon from "@/assets/clock_icon.svg";
+
+dayjs.locale("pt-br");
+dayjs.extend(localeData);
 
 interface ContentCardProps {
   examType: string;
@@ -53,6 +60,8 @@ const ContentCard: FC<ContentCardProps> = ({
     }
   };
 
+  const formattedDate = dayjs(examDate).format("dddd, D [de] MMMM");
+
   return (
     <MainContainer onClick={handleFileOpen}>
       <IconContainer>
@@ -69,7 +78,7 @@ const ContentCard: FC<ContentCardProps> = ({
         </ExamDescriptionContainer>
         <ExamDateContainer>
           <Typography fontSize="0.8rem" fontWeight="500">
-            {examDate}
+            {formattedDate}
           </Typography>
         </ExamDateContainer>
       </ExamInfoContainer>
